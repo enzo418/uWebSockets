@@ -1,6 +1,7 @@
 # Author: enzo418
 # Description: Simple rewrite of the Makefile present here. Exports the
 #              uSockets without SSL library as "usocketslib".
+# Please include it in your project using add_subdirectory(pathtothisfolder)
 # ----
 cmake_minimum_required(VERSION 3.12)
 
@@ -12,16 +13,17 @@ project(uWebSockets)
 set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/src/uWebSockets)
+include_directories(src/uWebSockets)
+include_directories(uSockets/src)
 
 # it's a header library, it solely depends on uSockets
-include(${CMAKE_CURRENT_LIST_DIR}/uSockets/CMakeLists.txt)
+add_subdirectory(uSockets)
 
 if(BUILD_EXAMPLES)
     file(
         GLOB uwb_example_files 
-        "${CMAKE_CURRENT_LIST_DIR}/benchmarks/*.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/examples/*.cpp")
+        "benchmarks/*.cpp"
+        "examples/*.cpp")
 
     foreach(filename ${uwb_example_files})
         STRING(REGEX REPLACE
