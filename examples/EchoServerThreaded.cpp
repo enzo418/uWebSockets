@@ -23,7 +23,7 @@ int main() {
                 .maxBackpressure = 1 * 1024 * 1024,
                 /* Handlers */
                 .upgrade = nullptr,
-                .open = [](auto */*ws*/) {
+                .open = [](auto */*ws*/, auto paths) {
 
                 },
                 .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {

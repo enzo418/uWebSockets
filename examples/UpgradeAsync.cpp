@@ -94,7 +94,7 @@ int main() {
             }, 5000, 0);
 
         },
-        .open = [](auto *ws) {
+        .open = [](auto *ws, auto paths) {
             /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct.
              * Here we simply validate that indeed, something == 13 as set in upgrade handler. */
             std::cout << "Something is: " << static_cast<PerSocketData *>(ws->getUserData())->something << std::endl;

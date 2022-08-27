@@ -308,7 +308,12 @@ public:
 
         /* Emit open event and start the timeout */
         if (webSocketContextData->openHandler) {
-            webSocketContextData->openHandler(webSocket);
+            auto r = httpContextData->router.getCompletePath();
+
+            // copy the router url segments to pass it to the websocket open handler
+            const std::list<std::string_view> segments(r.first, r.first + r.second);
+
+            webSocketContextData->openHandler(webSocket, segments);
         }
     }
 

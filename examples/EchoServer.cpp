@@ -30,9 +30,12 @@ int main() {
         .sendPingsAutomatically = true,
         /* Handlers */
         .upgrade = nullptr,
-        .open = [](auto */*ws*/) {
+        .open = [](auto */*ws*/, const std::list<std::string_view>& paths) {
             /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct */
-
+            std::cout << "Paths:\n";
+            for (auto it = paths.begin(); it != paths.end(); it++)
+                std::cout << "\t- " << *it << '\n';
+            std::cout << '\n';
         },
         .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
             ws->send(message, opCode, true);

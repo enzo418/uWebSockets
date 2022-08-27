@@ -233,7 +233,7 @@ public:
         /* Maximum socket lifetime in seconds before forced closure (defaults to disabled) */
         unsigned short maxLifetime = 0;
         MoveOnlyFunction<void(HttpResponse<SSL> *, HttpRequest *, struct us_socket_context_t *)> upgrade = nullptr;
-        MoveOnlyFunction<void(WebSocket<SSL, true, UserData> *)> open = nullptr;
+        MoveOnlyFunction<void(WebSocket<SSL, true, UserData> *, const std::list<std::string_view>&)> open = nullptr;
         MoveOnlyFunction<void(WebSocket<SSL, true, UserData> *, std::string_view, OpCode)> message = nullptr;
         MoveOnlyFunction<void(WebSocket<SSL, true, UserData> *)> drain = nullptr;
         MoveOnlyFunction<void(WebSocket<SSL, true, UserData> *, std::string_view)> ping = nullptr;

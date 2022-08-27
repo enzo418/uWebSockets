@@ -31,7 +31,7 @@ int main() {
         .sendPingsAutomatically = false,
         /* Handlers */
         .upgrade = nullptr,
-        .open = [](auto *ws) {
+        .open = [](auto *ws, auto paths) {
             /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct */
 
             PerSocketData *perSocketData = (PerSocketData *) ws->getUserData();
