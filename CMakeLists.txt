@@ -25,12 +25,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(BUILD_EXAMPLES)
     file(
         GLOB uwb_example_files 
+        "benchmarks/*.c"
         "benchmarks/*.cpp"
         "examples/*.cpp")
 
     foreach(filename ${uwb_example_files})
         STRING(REGEX REPLACE
-        "([/\\][A-Za-z0-9_]+)+[/\\]([A-Za-z0-9_]+)\.cpp"
+        "([/\\][A-Za-z0-9_]+)+[/\\]([A-Za-z0-9_]+)\.c(pp)?"
         "\\2" uwb_exec_name ${filename}) # get exec output name
     
         add_executable(${uwb_exec_name} ${filename})
