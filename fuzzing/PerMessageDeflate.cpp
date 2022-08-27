@@ -7,7 +7,7 @@
 #include <bitset>
 
 /* We test the permessage deflate module */
-#include "../src/PerMessageDeflate.h"
+#include "PerMessageDeflate.h"
 
 #include "helpers.h"
 

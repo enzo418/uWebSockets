@@ -6,7 +6,7 @@
 #include <string>
 #include <cstdlib>
 
-#include "../src/Multipart.h"
+#include "Multipart.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 

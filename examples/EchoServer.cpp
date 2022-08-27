@@ -17,6 +17,8 @@ int main() {
 	    .key_file_name = "../misc/key.pem",
 	    .cert_file_name = "../misc/cert.pem",
 	    .passphrase = "1234"
+	}).get("/*", [](auto *res, auto */*req*/) {
+	    res->end("Echo server");
 	}).ws<PerSocketData>("/*", {
         /* Settings */
         .compression = uWS::CompressOptions(uWS::DEDICATED_COMPRESSOR_4KB | uWS::DEDICATED_DECOMPRESSOR),

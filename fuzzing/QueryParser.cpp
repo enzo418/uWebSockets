@@ -1,4 +1,4 @@
-#include "../src/QueryParser.h"
+#include "QueryParser.h"
 
 #include <string>
 

@@ -5,7 +5,7 @@
 #include "helpers.h"
 
 /* We test the websocket parser */
-#include "../src/WebSocketProtocol.h"
+#include "WebSocketProtocol.h"
 
 struct Impl {
     static bool refusePayloadLength(uint64_t length, uWS::WebSocketState<true> *wState, void *s) {

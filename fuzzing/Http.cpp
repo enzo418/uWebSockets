@@ -5,13 +5,13 @@
 #include "helpers.h"
 
 /* We test the websocket parser */
-#include "../src/HttpParser.h"
+#include "HttpParser.h"
 
 /* And the router */
-#include "../src/HttpRouter.h"
+#include "HttpRouter.h"
 
 /* Also ProxyParser */
-#include "../src/ProxyParser.h"
+#include "ProxyParser.h"
 
 struct StaticData {
 

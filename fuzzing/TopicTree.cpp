@@ -3,7 +3,7 @@
 #include "helpers.h"
 
 /* Test for the topic tree */
-#include "../src/TopicTree.h"
+#include "TopicTree.h"
 
 #include <memory>
 
