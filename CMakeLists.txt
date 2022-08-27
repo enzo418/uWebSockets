@@ -25,8 +25,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(BUILD_EXAMPLES)
     file(
         GLOB uwb_example_files 
-        "benchmarks/*.c"
-        "benchmarks/*.cpp"
         "examples/*.cpp")
 
     foreach(filename ${uwb_example_files})
