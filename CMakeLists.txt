@@ -19,6 +19,9 @@ include_directories(uSockets/src)
 # it's a header library, it solely depends on uSockets
 add_subdirectory(uSockets)
 
+# clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(BUILD_EXAMPLES)
     file(
         GLOB uwb_example_files 
@@ -34,6 +37,3 @@ if(BUILD_EXAMPLES)
         target_link_libraries(${uwb_exec_name} usocketslib "-lz")
     endforeach()
 endif()
-
-# clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
