@@ -23,6 +23,9 @@ add_subdirectory(uSockets)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(BUILD_EXAMPLES)
+    # Only examples will be on debug, uSockets will be in realease mode.
+    set(CMAKE_BUILD_TYPE Debug)
+
     file(
         GLOB uwb_example_files 
         "examples/*.cpp")
