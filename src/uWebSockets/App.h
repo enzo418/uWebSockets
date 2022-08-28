@@ -281,7 +281,7 @@ public:
                 }
 
                 /* If we ever overstep maxBackpresure, exit immediately */
-                if (WebSocket<SSL, true, int>::SendStatus::DROPPED == ws->send(message.message, (OpCode)message.opCode, message.compress)) {
+                if (WsSendStatus::DROPPED == ws->send(message.message, (OpCode)message.opCode, message.compress)) {
                     if (needsUncork) {
                         ((AsyncSocket<SSL> *)ws)->uncork();
                         needsUncork = false;

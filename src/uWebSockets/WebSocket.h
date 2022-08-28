@@ -26,6 +26,11 @@
 #include <string_view>
 
 namespace uWS {
+enum WsSendStatus : int {
+    BACKPRESSURE,
+    SUCCESS,
+    DROPPED
+};
 
 template <bool SSL, bool isServer, typename USERDATA>
 struct WebSocket : AsyncSocket<SSL> {
@@ -67,29 +72,23 @@ public:
         return us_socket_close(SSL, (us_socket_t *) this, 0, nullptr);
     }
 
-    enum SendStatus : int {
-        BACKPRESSURE,
-        SUCCESS,
-        DROPPED
-    };
-
     /* Sending fragmented messages puts a bit of effort on the user; you must not interleave regular sends
      * with fragmented sends and you must sendFirstFragment, [sendFragment], then finally sendLastFragment. */
-    SendStatus sendFirstFragment(std::string_view message, OpCode opCode = OpCode::BINARY, bool compress = false) {
+    WsSendStatus sendFirstFragment(std::string_view message, OpCode opCode = OpCode::BINARY, bool compress = false) {
         return send(message, opCode, compress, false);
     }
 
-    SendStatus sendFragment(std::string_view message, bool compress = false) {
+    WsSendStatus sendFragment(std::string_view message, bool compress = false) {
         return send(message, CONTINUATION, compress, false);
     }
 
-    SendStatus sendLastFragment(std::string_view message, bool compress = false) {
+    WsSendStatus sendLastFragment(std::string_view message, bool compress = false) {
         return send(message, CONTINUATION, compress, true);
     }
 
     /* Send or buffer a WebSocket frame, compressed or not. Returns BACKPRESSURE on increased user space backpressure,
      * DROPPED on dropped message (due to backpressure) or SUCCCESS if you are free to send even more now. */
-    SendStatus send(std::string_view message, OpCode opCode = OpCode::BINARY, bool compress = false, bool fin = true) {
+    WsSendStatus send(std::string_view message, OpCode opCode = OpCode::BINARY, bool compress = false, bool fin = true) {
         WebSocketContextData<SSL, USERDATA> *webSocketContextData = (WebSocketContextData<SSL, USERDATA> *) us_socket_context_ext(SSL,
             (us_socket_context_t *) us_socket_context(SSL, (us_socket_t *) this)
         );
