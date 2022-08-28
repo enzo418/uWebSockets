@@ -1,3 +1,7 @@
+#pragma once
+
+#include "App.h"
+
 /* Middleware to fill out content-type */
 inline bool hasExt(std::string_view file, std::string_view ext) {
     if (ext.size() > file.size()) {
@@ -13,6 +17,8 @@ uWS::HttpResponse<SSL> *serveFile(uWS::HttpResponse<SSL> *res, uWS::HttpRequest 
 
     if (hasExt(req->getUrl(), ".svg")) {
         res->writeHeader("Content-Type", "image/svg+xml");
+    } else if (hasExt(req->getUrl(), ".mp4")) {
+        res->writeHeader("Content-Type", "video/mp4");
     }
 
     return res;

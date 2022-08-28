@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     } else {
         /* HTTP */
         uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
+            std::cout << "Requested file " << req->getUrl() << "\n";
             serveFile(res, req);
             asyncFileStreamer.streamFile(res, req->getUrl());
         }).listen(port, [port, root](auto *token) {

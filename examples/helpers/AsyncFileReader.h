@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Loop.h"
 #include <map>
 #include <cstring>
 #include <fstream>
@@ -53,18 +56,18 @@ public:
         /* Did we hit the cache? */
         if (hasCache && offset >= cacheOffset && ((offset - cacheOffset) < cache.length())) {
             /* Cache hit */
-            //std::cout << "Cache hit!" << std::endl;
+            std::cout << "Cache hit!" << std::endl;
 
-            /*if (fileSize - offset < cache.length()) {
+            if (fileSize - offset < cache.length()) {
                 std::cout << "LESS THAN WHAT WE HAVE!" << std::endl;
-            }*/
+            }
 
             int chunkSize = std::min<int>(fileSize - offset, cache.length() - offset + cacheOffset);
 
             return std::string_view(cache.data() + offset - cacheOffset, chunkSize);
         } else {
             /* Cache miss */
-            //std::cout << "Cache miss!" << std::endl;
+            std::cout << "Cache miss!" << std::endl;
             return std::string_view(nullptr, 0);
         }
     }
@@ -84,10 +87,8 @@ public:
         // disable cache
         hasCache = false;
 
-        std::async(std::launch::async, [this, cb, offset]() {
-            //std::cout << "ASYNC Caching 1 MB at offset = " << offset << std::endl;
-
-
+        (void)std::async(std::launch::async, [this, cb, offset]() {
+            std::cout << "ASYNC Caching 1 MB at offset = " << offset << std::endl;
 
             // den har stängts! öppna igen!
             if (!fin.good()) {

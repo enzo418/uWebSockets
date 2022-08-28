@@ -1,5 +1,9 @@
-#include <filesystem>
+#pragma once
 
+#include <filesystem>
+#include <map>
+#include "AsyncFileReader.h"
+#include "HttpContextData.h"
 struct AsyncFileStreamer {
 
     std::map<std::string_view, AsyncFileReader *> asyncFileReaders;
@@ -18,9 +22,11 @@ struct AsyncFileStreamer {
                 url = "/";
             }
 
-            char *key = new char[url.length()];
-            memcpy(key, url.data(), url.length());
-            asyncFileReaders[std::string_view(key, url.length())] = new AsyncFileReader(p.path().string());
+            if (!std::filesystem::is_directory(p)) {
+                char *key = new char[url.length()];
+                memcpy(key, url.data(), url.length());
+                asyncFileReaders[std::string_view(key, url.length())] = new AsyncFileReader(p.path().string());
+            }
         }
     }
 
@@ -29,6 +35,7 @@ struct AsyncFileStreamer {
         auto it = asyncFileReaders.find(url);
         if (it == asyncFileReaders.end()) {
             std::cout << "Did not find file: " << url << std::endl;
+            res->end(); // write status 404 (but should move middleware)
         } else {
             streamFile(res, it->second);
         }
@@ -51,6 +58,11 @@ struct AsyncFileStreamer {
             // us_socket_up_ref eftersom vi delar ägandeskapet
 
             if (chunk.length() < asyncFileReader->getFileSize()) {
+                res->onAborted([]() {
+                    std::cout << "ABORTED!" << std::endl;
+                });
+
+                // forward cache more data
                 asyncFileReader->request(res->getWriteOffset(), [res, asyncFileReader](std::string_view chunk) {
                     // check if we were closed in the mean time
                     //if (us_socket_is_closed()) {
@@ -66,7 +78,7 @@ struct AsyncFileStreamer {
                         AsyncFileStreamer::streamFile(res, asyncFileReader);
                     }
                 });
-            }
+            } // it wasn't sent?
         } else {
             /* We failed writing everything, so let's continue when we can */
             res->onWritable([res, asyncFileReader](int offset) {
