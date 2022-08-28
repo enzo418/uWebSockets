@@ -456,6 +456,19 @@ public:
         return !failed;
     }
 
+    bool writeOrZero(std::string_view data) {
+        if (!data.length()) {
+            writeStatus(HTTP_200_OK);
+            Super::write("\r\n", 2);
+            writeUnsignedHex(0);
+            Super::write("\r\n", 2);
+
+            return true;
+        }
+
+        return write(data);
+    }
+
     /* Get the current byte write offset for this Http response */
     uintmax_t getWriteOffset() {
         HttpResponseData<SSL> *httpResponseData = getHttpResponseData();
