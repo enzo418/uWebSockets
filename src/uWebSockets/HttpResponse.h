@@ -401,10 +401,26 @@ public:
         internalEnd(data, data.length(), false, true, closeConnection);
     }
 
+    /* End the response with json headers.
+     * Utility.
+    **/
+    void endJson(std::string_view data = {}, bool closeConnection = false) {
+        writeHeader("Access-Control-Allow-Origin", "*"); // Hacky CORS (pls use middleware!)
+        writeHeader("Content-Type", "application/json");
+        internalEnd(data, data.length(), false, true, closeConnection);
+    }
+
     /* Try and end the response. Returns [true, true] on success.
      * Starts a timeout in some cases. Returns [ok, hasResponded] */
     std::pair<bool, bool> tryEnd(std::string_view data, uintmax_t totalSize = 0) {
         return {internalEnd(data, totalSize, true), hasResponded()};
+    }
+
+    /* Dont write Content-Length header.
+     * Try and end the response. Returns [true, true] on success.
+     * Starts a timeout in some cases. Returns [ok, hasResponded] */
+    std::pair<bool, bool> tryEndWithoutContentLength(std::string_view data, uintmax_t totalSize = 0) {
+        return {internalEnd(data, totalSize, true, false), hasResponded()};
     }
 
     /* Write parts of the response in chunking fashion. Starts timeout if failed. */

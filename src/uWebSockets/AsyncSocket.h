@@ -226,9 +226,9 @@ protected:
     /* Write in three levels of prioritization: cork-buffer, syscall, socket-buffer. Always drain if possible.
      * Returns pair of bytes written (anywhere) and wheter or not this call resulted in the polling for
      * writable (or we are in a state that implies polling for writable). */
-    std::pair<int, bool> write(const char *src, int length, bool optionally = false, int nextLength = 0) {
+    std::pair<int, bool> write(const char *src, int length, bool optionally = false, int nextLength = 0, bool fakeSucess = true) {
         /* Fake success if closed, simple fix to allow uncork of closed socket to succeed */
-        if (us_socket_is_closed(SSL, (us_socket_t *) this)) {
+        if (fakeSucess && us_socket_is_closed(SSL, (us_socket_t *) this)) {
             return {length, false};
         }
 
