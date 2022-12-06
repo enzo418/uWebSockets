@@ -398,6 +398,7 @@ public:
 
     /* End the response with an optional data chunk. Always starts a timeout. */
     void end(std::string_view data = {}, bool closeConnection = false) {
+        writeHeader("Access-Control-Allow-Origin", "*"); // Hacky CORS (pls use middleware!)
         internalEnd(data, data.length(), false, true, closeConnection);
     }
 
