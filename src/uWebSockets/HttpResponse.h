@@ -411,6 +411,12 @@ public:
         internalEnd(data, data.length(), false, true, closeConnection);
     }
 
+    void endProblemJson(std::string_view data = {}, bool closeConnection = false) {
+        writeHeader("Access-Control-Allow-Origin", "*"); // Hacky CORS (pls use middleware!)
+        writeHeader("Content-Type", "application/problem+json");
+        internalEnd(data, data.length(), false, true, closeConnection);
+    }
+
     /* Try and end the response. Returns [true, true] on success.
      * Starts a timeout in some cases. Returns [ok, hasResponded] */
     std::pair<bool, bool> tryEnd(std::string_view data, uintmax_t totalSize = 0) {
