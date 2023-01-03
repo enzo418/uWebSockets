@@ -230,7 +230,7 @@ private:
                     }
 
                     /* Same here, we do not care for any particular smart allocation scheme */
-                    webSocketData->fragmentBuffer.resize(webSocketData->fragmentBuffer.length() - webSocketData->controlTipLength);
+                    webSocketData->fragmentBuffer.resize((unsigned int) webSocketData->fragmentBuffer.length() - webSocketData->controlTipLength);
                     webSocketData->controlTipLength = 0;
                 }
             }
@@ -367,6 +367,12 @@ private:
 
             /* If we get a fin, we just close I guess */
             us_socket_close(SSL, (us_socket_t *) s, 0, nullptr);
+
+            return s;
+        });
+
+        us_socket_context_on_long_timeout(SSL, getSocketContext(), [](auto *s) {
+            ((WebSocket<SSL, isServer, USERDATA> *) s)->end(1000, "please reconnect");
 
             return s;
         });
