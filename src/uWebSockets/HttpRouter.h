@@ -18,6 +18,7 @@
 #ifndef UWS_HTTPROUTER_HPP
 #define UWS_HTTPROUTER_HPP
 
+#include <exception>
 #include <map>
 #include <vector>
 #include <cstring>
@@ -56,6 +57,11 @@ private:
     std::string_view currentUrl;
     std::string_view urlSegmentVector[MAX_URL_SEGMENTS];
     int urlSegmentTop;
+
+    /* http events callbacks */
+    MoveOnlyFunction<void()> cb_onHttpStart;
+    MoveOnlyFunction<void()> cb_onHttpEnd;
+    MoveOnlyFunction<void(std::exception_ptr)> cb_onHttpException;
 
     /* The matching tree */
     struct Node {
@@ -261,16 +267,27 @@ public:
 
     /* Fast path */
     bool route(std::string_view method, std::string_view url) {
+        this->cb_onHttpStart();
+
         /* Reset url parsing cache */
         setUrl(url);
         routeParameters.reset();
 
-        /* Begin by finding the method node */
-        for (auto &p : root.children) {
-            if (p->name == method) {
-                /* Then route the url */
-                return executeHandlers(p.get(), 0, userData);
+        try{
+            /* Begin by finding the method node */
+            for (auto &p : root.children) {
+                if (p->name == method) {
+                    /* Then route the url */
+                    bool handlerFound = executeHandlers(p.get(), 0, userData);
+
+                    this->cb_onHttpEnd();
+
+                    return handlerFound;
+                }
             }
+        } catch(...) {
+            auto ex_ptr = std::current_exception();
+            this->cb_onHttpException(ex_ptr);
         }
 
         /* We did not find any handler for this method and url */
@@ -377,6 +394,18 @@ public:
     std::pair<std::string_view *, int> getCompletePath() {
         forceReadAllSegments();
         return {urlSegmentVector, 1 + urlSegmentTop};
+    }
+
+    void onHttpStart(MoveOnlyFunction<void()>&& cb) {
+        this->cb_onHttpStart = std::move(cb);
+    }
+
+    void onHttpEnd(MoveOnlyFunction<void()>&& cb) {
+        this->cb_onHttpEnd = std::move(cb);
+    }
+
+    void onHttpException(MoveOnlyFunction<void(std::exception_ptr)>&& cb) {
+        this->cb_onHttpException = std::move(cb);
     }
 };
 

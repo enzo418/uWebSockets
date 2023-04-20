@@ -572,6 +572,30 @@ public:
         return std::move(*this);
     }
 
+    TemplatedApp && onHttpStart(MoveOnlyFunction<void()> &&handler) {
+        if (httpContext) {
+            httpContext->onHttpStart(std::move(handler));
+        }
+        
+        return std::move(*this);
+    }
+
+    TemplatedApp && onHttpEnd(MoveOnlyFunction<void()> &&handler) {
+        if (httpContext) {
+            httpContext->onHttpEnd(std::move(handler));
+        }
+        
+        return std::move(*this);
+    }
+
+    TemplatedApp && onHttpException(MoveOnlyFunction<void(std::exception_ptr)> &&handler) {
+        if (httpContext) {
+            httpContext->onHttpException(std::move(handler));
+        }
+        
+        return std::move(*this);
+    }
+
 };
 
 typedef TemplatedApp<false> App;

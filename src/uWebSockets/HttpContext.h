@@ -26,6 +26,7 @@
 #include "AsyncSocket.h"
 #include "WebSocketData.h"
 
+#include <exception>
 #include <string_view>
 #include <iostream>
 #include "MoveOnlyFunction.h"
@@ -465,6 +466,22 @@ public:
     /* Listen to unix domain socket using this HttpContext */
     us_listen_socket_t *listen(const char *path, int options) {
         return us_socket_context_listen_unix(SSL, getSocketContext(), path, options, sizeof(HttpResponseData<SSL>));
+    }
+
+    /* Register http events */
+    void onHttpStart(MoveOnlyFunction<void()> &&handler) {
+        HttpContextData<SSL> *httpContextData = getSocketContextData();
+        httpContextData->currentRouter->onHttpStart(std::move(handler));
+    }
+
+    void onHttpEnd(MoveOnlyFunction<void()> &&handler) {
+        HttpContextData<SSL> *httpContextData = getSocketContextData();
+        httpContextData->currentRouter->onHttpEnd(std::move(handler));
+    }
+
+    void onHttpException(MoveOnlyFunction<void(std::exception_ptr)> &&handler) {
+        HttpContextData<SSL> *httpContextData = getSocketContextData();
+        httpContextData->currentRouter->onHttpException(std::move(handler));
     }
 };
 

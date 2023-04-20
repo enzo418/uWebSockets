@@ -19,6 +19,8 @@ include_directories(uSockets/src)
 # it's a header library, it solely depends on uSockets
 add_subdirectory(uSockets)
 
+find_package(OpenTelemetry-cpp REQUIRED)
+
 # clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -36,6 +38,12 @@ if(BUILD_EXAMPLES)
         "\\2" uwb_exec_name ${filename}) # get exec output name
     
         add_executable(${uwb_exec_name} ${filename})
-        target_link_libraries(${uwb_exec_name} usocketslib "-lz")
+
+
+        # if opentelemtry ....
+
+        target_link_libraries(${uwb_exec_name} usocketslib "-lz" 
+                ${OPENTELEMETRY_CPP_LIBRARIES}
+        )
     endforeach()
 endif()
