@@ -502,6 +502,23 @@ public:
         return Super::getBufferedAmount();
     }
 
+
+    bool writeRaw(std::string_view data) {
+        /* Do not allow sending 0 chunks, they mark end of response */
+        if (!data.length()) {
+            /* If you called us, then according to you it was fine to call us so it's fine to still call us */
+            return true;
+        }
+        
+        auto [written, failed] = Super::write(data.data(), (int) data.length());
+        if (failed) {
+            Super::timeout(HTTP_TIMEOUT_S);
+        }
+
+        /* If we did not fail the write, accept more */
+        return !failed;
+    }
+
     bool writeOrZero(std::string_view data) {
         if (!data.length()) {
             writeStatus(HTTP_200_OK);
