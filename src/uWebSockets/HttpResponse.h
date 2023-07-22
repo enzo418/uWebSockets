@@ -498,6 +498,10 @@ public:
         return !failed;
     }
 
+    unsigned int getBackPressure() {
+        return Super::getBufferedAmount();
+    }
+
     bool writeOrZero(std::string_view data) {
         if (!data.length()) {
             writeStatus(HTTP_200_OK);
